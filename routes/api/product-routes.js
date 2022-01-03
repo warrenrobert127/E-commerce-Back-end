@@ -5,27 +5,25 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // get all products
 router.get('/', (req, res) => {
+  // find all products
+  // be sure to include its associated Category and Tag data
   Product.findAll({ include: [Category, Tag]})
   .then(dbData => res.json(dbData))
   .catch(err => {
     console.log(err);
     res.status(500).json(err);
   });
-  // find all products
-  // be sure to include its associated Category and Tag data
+  
 });
 
 // get one product
 router.get('/:id', (req, res) => {
+  // find a single product by its `id`
+  // be sure to include its associated Category and Tag data
   Product.findOne({
     where: {
       id: req.params.id
-    },
-    include: [
-      {
-        model: Category, Tag
-      },
-    ]
+    }
   })
     .then(dbData => {
       if (!dbData) {
@@ -38,11 +36,11 @@ router.get('/:id', (req, res) => {
       console.log(err);
       res.status(500).json(err);
     });
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
+  
 });
 
 // create new product
+//POST /api/product
 router.post('/', (req, res) => {
   /* req.body should look like this...
     {
@@ -52,7 +50,15 @@ router.post('/', (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
-  Product.create(req.body)
+ 
+  Product.create(req.body) ({
+    product_name: "Basketball",
+      price: 200.00,
+      stock: 3,
+      tagIds: [1, 2, 3, 4]
+
+  })
+  
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
       if (req.body.tagIds.length) {
@@ -82,7 +88,7 @@ router.put('/:id', (req, res) => {
       id: req.params.id,
     },
   })
-    .then((product) => {
+    .then((dbData) => {
       // find all associated tags from ProductTag
       return ProductTag.findAll({ where: { product_id: req.params.id } });
     })
@@ -118,6 +124,7 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   Product.destroy({
+    // delete one product by its `id` value
     where: {
       id: req.params.id
     }
@@ -133,7 +140,7 @@ router.delete('/:id', (req, res) => {
       console.log(err);
       res.status(500).json(err);
     });
-  // delete one product by its `id` value
+  
 });
 
 module.exports = router;

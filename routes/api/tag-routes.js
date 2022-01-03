@@ -4,18 +4,19 @@ const { Tag, Product, ProductTag } = require('../../models');
 // The `/api/tags` endpoint
 
 router.get('/', (req, res) => {
+  // find all tags
+  // be sure to include its associated Product data
   Tag.findAll({ include: [Product] })
     .then(dbData => res.json(dbData))
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
-  // find all tags
-  // be sure to include its associated Product data
 });
-
 router.get('/:id', (req, res) => {
   Tag.findOne({
+    // find a single tag by its `id`
+  // be sure to include its associated Product data
     where: {
       id: req.params.id
     },
@@ -36,8 +37,7 @@ router.get('/:id', (req, res) => {
       console.log(err);
       res.status(500).json(err);
     });
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
+  
 });
 
 router.post('/', (req, res) => {
